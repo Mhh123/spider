@@ -1,0 +1,56 @@
+day02-爬虫2
+
+1、构建请求对象
+	user-agent: 客户端浏览器类型
+	headers = {
+		'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36'
+	}
+	request = urllib.request.Request(url=url, headers=headers)
+2、各种请求方式
+	get
+		用户输入要搜索的内容，发送请求，将响应保存到以内容为名字的html文件中
+	post
+		百度翻译
+	ajax-get
+		豆瓣电影
+		https://movie.douban.com/j/chart/top_list?type=5&interval_id=100%3A90&action=&start=10&limit=10
+
+		每页10部电影
+		1      start=0  limit=10
+		2      start=10 limit=10
+		n      start=(n-1)*10  limit=10
+	ajax-post
+		肯德基店铺位置
+3、百度贴吧
+	https://tieba.baidu.com/f?kw=%E6%9D%8E%E6%AF%85&ie=utf-8&pn=100
+	n   pn=(n-1)*50
+	输入贴吧名字
+	输入要爬取的起始页码
+	输入要爬取的结束页码
+
+	以贴吧名字创建一个文件夹，以页码的名字创建文件，将文件保存到文件夹中
+	【注】response对象的read()只能读取一次，读取第二次返回给你空
+4、URLError\HTTPError
+	异常处理类，都在urllib.error
+	URLError: 访问不存在的域名
+	HTTPError: 是URLError的子类，访问的页面不存在的时候抛出
+	是你的代码更加的健壮
+5、Handler处理器、自定义Opener
+	更加的高级的功能，要使用handler、opener实现
+	通过handler、opener来实现简单的发送请求
+	# 首先创建一个handler
+	handler = urllib.request.HTTPHandler()
+	# 通过handler创建一个opener
+	opener = urllib.request.build_opener(handler)
+6、代理
+	代理是什么？代驾，代购（），代练
+	程序中
+	代理服务器：快代理、西祠代理、阿布云代理、芝麻代理
+	（1）浏览器配置代理
+		三个点==》设置==》高级设置==》打开代理设置==》连接==》局域网设置==》为LAN设置代理服务器，输入ip和端口保存即可
+		花刺代理软件，一键设置，测试完毕记得取消代理
+	（2）代码配置代理
+		# 创建handler
+		handler = urllib.request.ProxyHandler(proxies={'http': '124.193.37.5:8888'})
+		# 根据handler创建一个opener
+		opener = urllib.request.build_opener(handler)

@@ -1,0 +1,147 @@
+bs
+beautiful soup  第三方库
+
+
+
+
+windows:
+    (1) 打开文件管理器，输入%appdata%
+    (2)在这个文件夹下面，手动创建一个pip文件夹
+    (3)手动创建一个 pip.ini 文件 （要把扩展名明显示出来检测一下）
+    (4) 编辑如下内容(就是添加链各个文件:pip.ali.ini  pip.ini)
+        [global]
+        timeout = 6000
+        index-url = http://pip.douban.com/simple
+        trusted-host = pypi.douban.com
+
+ linux下:
+    (1)cd ~
+    (2)mkdir ~/.pip
+    (3)vim ~/.pip/pip.conf
+    (4)编辑内容一样
+
+安装
+    pip install bs4
+
+    pip install lxml
+
+    bs4是什么？
+    这个是一个第三方的一个接口，可以讲网页内容生成一个对象。
+    会提供一些方法和属性，可以快速的获得标签和属性
+    lxml是什么？
+    是一个文件解析器，
+    python官方自带一个解析器，  html.parser
+
+
+    (2) 获取属性和内容
+        obj.attrs
+        obj.attrs['href']
+        obj['href'] : 获取指定的属性
+
+        obj.string
+        obj.text
+        obj.get_text()
+        【注】
+        如果标签里面只有内容，三个获取的结果一样；
+        如果标签里卖弄还有标签，
+        string 获取道德是None
+        其他两个获取纯文本内容，带着换行符或者 \t等。
+
+    (3) find方法
+     返回一个对象
+     soup.find('tag_name','definitive_condition')
+     # definitive_condition 限定条件
+     # 可以指定 id, title， class_
+     # class_  为了避免于python 关键字冲突
+    (4) find_all
+     soup.find_all('tag_name') 返回一个列表
+     soup.find_all('tag_name', definitive_condition)
+
+    example:
+        soup.find_all('a', class_ = 'xxx')
+        # 查找到所有class_ = xxx 的a 标签
+
+        # 下面两个不常用
+        soup.find_all('a', class = re.compile(r''))
+        soup.find_all('a', limit = 3)
+    (5) select
+        选择， 选择器， css: 层叠样式，添加样式
+        常用的选择器:
+            标签
+            id
+            类
+            群组
+            包含
+            属性
+          标准手册的分类：
+            元素选择符:
+                通配符(*)
+                类型选择符(E)
+                ID选择符(E#id)
+                类选择符(E.class)
+            关系选择符:
+                包含选择符(E F)  #选择所有E元素包含的F元素
+                子选择符(E>F)   #与 包含选择符(E F) 不同的是，子选择符只能命中子元素，而不能命中孙辈。
+                相邻选择符(E+F)
+                兄弟选择则符(E^F)
+            属性选择符:
+                E[att]
+                E[att="val"]
+                E[att~="val"]
+                E[att^="val"]
+                E[att$="val"]
+                E[att*="val"]
+                E[att|="val"]
+            伪类选择符:
+                E:link
+                E:visited
+                E:hover
+                E:active
+                E:focus
+                E:lang(fr)
+                E:not(s)
+                E:root
+                ...
+            伪对象选择符:
+                E:first-letter/E::first-letter
+                E:first-line/E::first-line
+                E:before/E://before
+                E:after/E::after
+                E::placeholder
+                E::selection
+ 2  bs4 实例
+
+ 3 xpath
+    前端      后端
+    前台  后台
+    xml和html的区别
+    (1) 一个用来传输数据，一个用来显示数据
+    (2) 一个可以自定义标签，一个不可以
+    xpath:
+        在xml中通过路径来提取指定数据
+    html和xml类似，
+    由于xml提取数据效率非常高，
+    所有python中出现一个第三方模块(lxml)，
+    可以实现解析html
+
+    /   从根节点开始找
+    //  从任意位置开始找
+    .   当前节点
+    ..  父节点
+    @   选取属性
+    bookstore/book      在bookstore下面找直接子节点book
+    //book              在文档中找所有的book
+    bookstore//book     在bookstore下面找所有book节点
+    //@lang             找所有有lang属性的节点
+    bookstore/book[1]   下标是从1开始的额
+    bookstore/book[last()]
+    bookstore/book[position()<3] 取前两个book
+    bookstore//book[1]   找到所有book下面的第一个
+    //title[@lang]       找到所有有lang属性的title
+    //title[@lang='eng']
+    bookstore/*           找到bookstore下的所有元素
+    //title[@*]           找所有有属性的title
+
+
+    函数:
+    contains, starts-with, ends-with
