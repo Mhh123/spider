@@ -1,0 +1,76 @@
+1 多线程爬虫完善
+
+2  自动识别验证码
+  古诗文网
+  （1）手动将验证码保存到本地，当发请求的时候，提示用户输入验证码
+  （2）光学识别OCR，软件识别，识别估计80~90之间，简单验证码
+        指令识别  tesseract xxx.png lala
+        代码识别
+            pip install pytesseract
+            pip install pillow
+  （3）打码平台，识别率99%，花钱的
+
+3 scrapy
+    what is scrapy?
+    就是一个非常强悍的爬虫框架，底层使用python,语言实现，多进程，多线程，队列
+    在里面都已经实现，只需要调用就ok了
+    安装:
+        pip install scrapy
+    认识框架；
+        框架有5部分组成,引擎、spiders、调度器、下载器、管道(itempipline)
+
+        运行原理:
+
+        基本使用:
+            1)创建项目
+            scrapy startproject firstblood
+            2)认识目录结构
+            F:.
+                │  scrapy.cfg
+                │
+                └─firstblood    项目目录
+                    │  items.py     #  定义数据结构的地方
+                    │  middlewares.py   #  中间件
+                    │  pipelines.py
+                    │  settings.py      #  配置文件
+                    │  __init__.py  #  包的标志
+                    │
+                    ├─spiders   存放自己编写的爬虫py文件，用于分析网页并提取item及额外的新增url
+                    │  │  __init__.py
+                    │  │
+                    │  └─__pycache__
+                    └─__pycache__
+            3)生成爬虫文件
+                scrapy genspider qiubai www.qiushibaike.com
+            4)认识response对象
+                运行工程
+                cmd到spider下面来运行
+                scrapy crawl qiubai
+
+             取消遵循robots，设置默认的UA头部
+                修改配置文件settings.py:
+                ROBOTSTXT_OBEY
+                USER_AGENT
+             字符串格式内容  response.text
+             字节格式内容     response.body
+             提取网页内容     response.xpath()
+             【注】在scrapy中，已经集成了xpath和bs，直接使用
+             通过xpath或者css的到的都是这种对象
+             [<Selector xpath='//div[@id="content-left"]/div' data='<div class="article block
+              untagged mb15 '>,...]
+             如果xpath精确到了内容或者属性，那么依然需要通过extract进行提取，
+             将对象转化为字符串
+        5)  保存到指定文件中
+            scrapy crawl qiubai -o qiubai.json
+            scrapy crawl qiubai -o qiubai.xml
+            scrapy crawl qiubai -o qiubai.csv
+
+            生成csv格式，如果没有配置，每一条数据中间会有空行
+
+
+            报错
+            [scrapy.downloadermiddlewares.robotstxt] ERROR: Error downlo
+            ading <GET http://www.qiushibaike.com/robots.txt>
+            因为  默认遵循了 robots君子协议
+            'ROBOTSTXT_OBEY': True
+
