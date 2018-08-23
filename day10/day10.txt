@@ -1,0 +1,78 @@
+1、 CrawlSpider
+    是什么？是一个类、和Spider是一样的，是继承自Spider的;
+    所以CrawSpider更加强大，强大在于他有一个功能:  提取链接(写一个规则，提取指定的链接)
+    LinkExtractor: 链接提取器
+
+    le = LinkExtractor(allow=xxx, restrict_xpaths=xxx, restrict_css=xxx)
+    # 3个参数写一个就行了
+    allow:  正则表达式
+    restrict_xpaths: xpath路径
+    restrict_css: 选择器
+
+    learning 链接提取 by scrapy shell
+
+        from scrapy.linkextractors import LinkExtractor
+
+        1 正则提取
+            le = LinkExtractor(allow=r'http://www\.fanjian\.net/duanzi-\d+')
+            le.extract_links(response)
+        2  xpath提取
+            le = LinkExtractor(restrict_xpaths='//div[@class="pager"]/a')
+            le = LinkExtractor(restrict_xpaths='//div[@class="pager"]')
+            le.extract_links(response)
+            可以精确到a,也可以不精确到a(无所谓)
+        3  css 提取
+            le = LinkExtractor(restrict_css='.pager > a')
+            le = LinkExtractor(restrict_css='.pager')
+            le.extract_links(response)
+
+
+    #  如果要使用CrawlSpider,创建spider文件的时候命令：
+        scrapy genspider -t crawl qiuqiu www.qiushibaike.com    # qiuqiu只是py文件的名字(随意)
+
+
+2、 存储到mysql、mongodb
+    导入函数，运行函数得到配置文件所有信息，是一个字典
+    from scrapy.utils.project import get_project_settings
+    settings = get_project_settings()
+
+    # 在一个工程中可以有多个爬虫文件，但是他们公用一个settings文件，
+    # 可以在自己当前的py文件中自定义自己的配置settings,就用到custom_settings
+    custom_settings = {}
+
+3、 redis配置
+    字符串、队列
+	linux、windows
+	用linux的redis客户端连接windows的redis服务器，并且可以读取和修改redis服务器里面的值
+	修改windows的redis配置文件如下：
+		第56行注释掉，可以让其他机器连接本机的redis服务
+			# bind 127.0.0.1
+		第75行，将yes修改为no
+			protected-mode no
+4、 存储到redis、分布式部署
+    分布是部署: 什么意思？让多个电脑共同爬取数据
+    scrapy能否实现分布式部署？实现不了，调度器的问题，存储到redis的问题，两个爬虫类的问题
+    使用scrapy-redis这套组件就解决了上述问题
+    pip install scrapy-redis
+
+
+    部署方式:
+        电脑1、电脑2、电脑3、电脑4
+        电脑1：只作redis的服务器
+        电脑2、电脑3、电脑4： 都是客户端，跑代码的
+    https://github.com/rmax/scrapy-redis
+
+
+    myspider_redis.py ：如果是普通的spider，想实现分布式部署，参考他
+    mycrawler_redis.py ：如果是crawlspider，想实现分布式部署，参考他
+    redis_key对应的就是start_urls
+    __init__() 对应的就是allowed_domains这个列表，但是，这是一个坑，这个方法不能使用
+
+
+    运行，来到spider文件夹中
+        scrapy runspider picture.py
+
+    通过redis输入起始url
+        lpush picturespider:start_urls 'http://699pic.com/food.html'
+
+

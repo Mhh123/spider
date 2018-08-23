@@ -1,0 +1,61 @@
+day09-爬虫9
+
+1、scrapy shell
+    scrapy shell是什么？是scrapy的一个终端调试工具，只要在这里面写的代码是对的，写到scrpapy的爬虫文件中，肯定没有问题
+    依赖第三方库  ipython   pip install ipython
+    用法如下：在终端下输入  scrapy shell url,一般可以直接进来，如果有问题，新建工程，配置好之后再进来
+    response对象在这里可以直接使用
+        response.text   字符串格式内容
+        response.body   字节格式内容
+        response.url    请求的url
+        response.headers 响应头部
+        response.status 响应状态码
+
+        方法：
+        response.xpath('xx/xx/xx/text()') 写xpath路径
+            ret: 是一个列表，列表里面都是selector对象
+            ret[0].extract() == ret.extract()[0] == ret.extract_first()
+            如果xpath写的有问题，使用extract_first获取到的是None，使用前两个直接报错
+        response.css()   写选择器
+            获取属性
+            ret = response.css('.author img::attr(src)')
+            ret = response.css('.author a::attr(href)')
+            得到结果还是selector对象，还需要extract或者extract_first才能实现
+            获取文本内容
+            ret = response.css('.author h2::text')
+            得到结果还是selector对象，还需要extract或者extract_first才能实现
+    item对象
+        定义数据结构的地方
+        这种数据结构是对象，该对象用法和字典的用法一模一样
+        item['name'] = 'haha'
+        item['age'] = '18'
+        该对象可以快速的转化为字典
+        d = dict(item)
+2、yield item和请求
+    yield
+    新建一个start.py,写入如下代码，直接运行这个文件即可
+    from scrapy import cmdline
+    cmdline.execute(['scrapy', 'crawl', 'qiu'])
+3、下载图片
+    http://699pic.com/food.html
+    http://521609.com/uploads/allimg/140717/1-140GF92J7.jpg
+    【注】如果是防盗链图片，在获取到图片的url之后，直接通过yield接着发送请求即可下载，scrapy会自带referer
+4、日志信息和错误等级
+    日志信息：就是运行scrapy的时候显示的所有信息都是日志信息
+    错误等级：有5个错误等级
+        CRITICAL    
+        ERROR
+        WARNING
+        INFO
+        DEBUG    默认级别是这个
+    设置错误等级
+        LOG_LEVEL = 'ERROR'
+    设置显示到文件中
+        LOG_FILE = 'log.txt
+5、发送post请求
+    scrapy启动立马发送post请求
+    在一个工程中可以有好多爬虫文件，运行的时候以爬虫的名字进行区分，他们都公用一个settings文件。
+    需要重写start_requests方法
+    发送post方法为
+    scrapy.FormRequest(url=url, formdata=data, callback=self.parse)
+6、请求传参
